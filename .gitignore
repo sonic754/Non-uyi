@@ -3,3 +3,4 @@
 !.env.example
 evaluation-results.json
 node_modules/
+dist/
