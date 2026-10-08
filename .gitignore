@@ -1,0 +1,5 @@
+.env
+.env.*
+!.env.example
+evaluation-results.json
+node_modules/

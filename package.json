@@ -1,0 +1,10 @@
+{
+  "name": "non-uyi-ai-prompt",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "evaluate": "node --env-file=.env evaluate-prompt.js",
+    "evaluate:smoke": "node --env-file=.env evaluate-prompt.js --smoke"
+  }
+}
