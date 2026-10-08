@@ -7,6 +7,7 @@
     "test": "node --test ai-prompt.test.js gemini-client.test.js tests/*.test.js",
     "check": "node --check server.js && node --check public/core.js && node --check public/app.js",
     "evaluate": "node --env-file=.env evaluate-prompt.js",
+    "evaluate:analysis": "node --env-file=.env evaluate-analysis.js",
     "evaluate:smoke": "node --env-file=.env evaluate-prompt.js --smoke"
   },
   "engines": { "node": ">=22" }

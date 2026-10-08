@@ -5,6 +5,74 @@ import App from './App.jsx';
 import { trainingMessages } from './data/trainingMessages.js';
 import { categories } from './logic/messages.js';
 
+it('processes a batch sequentially, keeps successful rows and retries only failed input', async () => {
+  const user=userEvent.setup();
+  const service=vi.fn().mockResolvedValueOnce(trainingMessages[0].result)
+    .mockRejectedValueOnce({status:429}).mockResolvedValueOnce(trainingMessages[2].result)
+    .mockResolvedValueOnce(trainingMessages[1].result);
+  render(<App analyzeMessage={service} initialDemoMode={false} />);
+  await user.click(screen.getByLabelText('Bir nechta xabar'));
+  fireEvent.change(screen.getByLabelText('Mijoz xabari'),{target:{value:trainingMessages.slice(0,3).map(item=>item.text).join('\n\n')}});
+  await user.click(screen.getByRole('button',{name:'Xabarlarni tahlil qilish'}));
+  expect(await screen.findByRole('alert')).toHaveTextContent('1 ta xabar qayta ishlanmadi');
+  expect(screen.getByTestId('stat-total')).toHaveTextContent('2');
+  expect(service).toHaveBeenCalledTimes(3);
+  expect(screen.getByLabelText('Mijoz xabari')).toHaveValue(trainingMessages[1].text);
+  await user.click(screen.getByRole('button',{name:'Xabarlarni tahlil qilish'}));
+  await waitFor(()=>expect(screen.getByTestId('stat-total')).toHaveTextContent('3'));
+  expect(screen.getByLabelText('Mijoz xabari')).toHaveValue('');
+});
+
+it('continues a batch after one item times out and ignores its late response', async () => {
+  vi.useFakeTimers();
+  try {
+    let resolveOld;
+    const service=vi.fn().mockImplementationOnce(()=>new Promise(resolve=>{resolveOld=resolve;})).mockResolvedValueOnce(trainingMessages[1].result);
+    render(<App analyzeMessage={service} initialDemoMode={false} timeoutMs={100} />);
+    fireEvent.click(screen.getByLabelText('Bir nechta xabar'));
+    fireEvent.change(screen.getByLabelText('Mijoz xabari'),{target:{value:'first\nsecond'}});
+    fireEvent.submit(screen.getByLabelText('Mijoz xabari').closest('form'));
+    await act(async()=>{await vi.advanceTimersByTimeAsync(100);});
+    expect(screen.getByTestId('stat-total')).toHaveTextContent('1');
+    expect(screen.getByLabelText('Mijoz xabari')).toHaveValue('first');
+    await act(async()=>resolveOld(trainingMessages[0].result));
+    expect(screen.getByTestId('stat-total')).toHaveTextContent('1');
+  } finally {vi.useRealTimers();}
+});
+
+it('rejects more than 20 messages without calling the service', () => {
+  const service=vi.fn();
+  render(<App analyzeMessage={service} initialDemoMode={false} />);
+  fireEvent.click(screen.getByLabelText('Bir nechta xabar'));
+  fireEvent.change(screen.getByLabelText('Mijoz xabari'),{target:{value:Array(21).fill('test').join('\n')}});
+  fireEvent.submit(screen.getByLabelText('Mijoz xabari').closest('form'));
+  expect(screen.getByRole('alert')).toHaveTextContent('20 tagacha');
+  expect(service).not.toHaveBeenCalled();
+});
+
+it('rejects a batch containing an oversized individual message before sending anything', () => {
+  const service=vi.fn();
+  render(<App analyzeMessage={service} initialDemoMode={false} />);
+  fireEvent.click(screen.getByLabelText('Bir nechta xabar'));
+  fireEvent.change(screen.getByLabelText('Mijoz xabari'),{target:{value:'short\n'+'x'.repeat(4001)}});
+  fireEvent.submit(screen.getByLabelText('Mijoz xabari').closest('form'));
+  expect(screen.getByRole('alert')).toHaveTextContent('4000');
+  expect(service).not.toHaveBeenCalled();
+});
+
+it('unmounting aborts the current batch item and never starts the remaining items', async () => {
+  const service=vi.fn(()=>new Promise(()=>{}));
+  const {unmount}=render(<App analyzeMessage={service} initialDemoMode={false} />);
+  fireEvent.click(screen.getByLabelText('Bir nechta xabar'));
+  fireEvent.change(screen.getByLabelText('Mijoz xabari'),{target:{value:'first\nsecond'}});
+  await act(async()=>fireEvent.submit(screen.getByLabelText('Mijoz xabari').closest('form')));
+  const {signal}=service.mock.calls[0][1];
+  unmount();
+  await act(async()=>{});
+  expect(signal.aborted).toBe(true);
+  expect(service).toHaveBeenCalledTimes(1);
+});
+
 async function submit(user, text) {
   await user.type(screen.getByLabelText('Mijoz xabari'), text);
   await user.click(screen.getByRole('button', { name: 'Xabarni tahlil qilish' }));

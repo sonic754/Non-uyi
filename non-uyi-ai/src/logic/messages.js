@@ -3,6 +3,24 @@ export const categories = {
 };
 export const languages = { uz: 'O‘zbekcha', ru: 'Ruscha', mixed: 'Aralash', unknown: 'Aniqlanmagan' };
 export const MAX_MESSAGE_LENGTH = 4000;
+export const MAX_BATCH_SIZE = 20;
+
+export function splitBatch(text) {
+  return text.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+}
+
+export function createOrdersCSV(messages) {
+  const cell = value => {
+    let text = String(value ?? '');
+    if (/^[\s\uFEFF\u200B]*[=+@\-\t\r]/u.test(text)) text = "'" + text;
+    return '"' + text.replaceAll('"', '""') + '"';
+  };
+  const rows = [['Xabar', 'Til', 'Mahsulotlar', 'Manzil', 'Vaqt', 'Javob qoralamasi']];
+  for (const message of messages.filter(item => item.category === 'order')) {
+    rows.push([message.text, message.language, message.items?.map(item => `${item.name} × ${item.quantity ?? '—'}`).join('; '), message.address, message.time, message.reply]);
+  }
+  return '\uFEFF' + rows.map(row => row.map(cell).join(',')).join('\r\n') + '\r\n';
+}
 
 const invalidResult = () => Object.assign(new Error('API javobi kutilgan formatda emas.'), { code: 'INVALID_RESPONSE' });
 const optionalText = (value) => {

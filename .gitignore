@@ -2,6 +2,7 @@
 .env.*
 !.env.example
 evaluation-results.json
+analysis-evaluation-results.json
 node_modules/
 dist/
 data/

@@ -17,6 +17,9 @@ test('proxy sends only validated message to fixed Gemini endpoint and suppresses
     called = true;
     assert.match(url, /^https:\/\/generativelanguage\.googleapis\.com\/v1beta\/models\/gemini-2\.5-flash:generateContent$/);
     assert.equal(options.headers['x-goog-api-key'], 'test-key');
+    const generationConfig=JSON.parse(options.body).generationConfig;
+    assert.equal(generationConfig.responseJsonSchema.additionalProperties,false);
+    assert.deepEqual(generationConfig.responseJsonSchema.required,['category','language','items','address','time','reply']);
     assert.match(JSON.stringify(options.body), /complaint/i);
     return new Response(JSON.stringify({candidates:[{content:{parts:[{text:JSON.stringify(valid)}]}}]}),{status:200});
   });

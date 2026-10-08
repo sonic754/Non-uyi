@@ -1,8 +1,17 @@
 const fields = ['category', 'language', 'items', 'address', 'time', 'reply'];
+export const ANALYSIS_SCHEMA = {
+  type:'object', additionalProperties:false, required:fields,
+  properties:{
+    category:{type:'string',enum:['order','question','complaint','spam']},
+    language:{type:['string','null'],enum:['ru','uz','mixed',null]},
+    items:{type:['array','null'],items:{type:'object',additionalProperties:false,required:['product','quantity'],properties:{product:{type:'string'},quantity:{type:['integer','null'],minimum:1}}}},
+    address:{type:['string','null']}, time:{type:['string','null']}, reply:{type:['string','null']},
+  },
+};
 const drafts = {
   order: {
-    uz: 'So‘rovingizni egaga yetkazamiz.',
-    ru: 'Здравствуйте! Передадим ваш запрос владельцу для уточнения.',
+    uz: 'Assalomu alaykum! So‘rovingizni egaga yetkazamiz. Buyurtmani operator tasdiqlaydi.',
+    ru: 'Здравствуйте! Передадим ваш запрос владельцу для уточнения. Заказ подтвердит оператор.',
     mixed: 'So‘rovingizni egaga yetkazamiz. Передадим ваш запрос владельцу.'
   },
   question: {
@@ -32,7 +41,9 @@ export function parseAnalysis(text) {
   if (data.category === 'question' && (data.items !== null || data.address !== null || data.time !== null)) throw new Error('Question data must not contain order fields.');
   if (!data.reply && data.language !== null) throw new Error('Order and question analyses require a reply draft.');
   if (data.category === 'question') return {category:'question',language:data.language,items:null,address:null,time:null,reply:data.reply};
-  return {category:'order', language:data.language, items:data.items, address:data.address, time:data.time, reply:data.reply};
+  const unconfirmed = /ваш заказ (?:принят|подтвержд)|buyurtmangiz (?:tasdiqlandi|qabul qilindi)/iu.test(data.reply ?? '');
+  const reply = unconfirmed ? (drafts.order[data.language] ?? null) : data.reply;
+  return {category:'order', language:data.language, items:data.items, address:data.address, time:data.time, reply};
 }
 
 export function splitMessages(text) {

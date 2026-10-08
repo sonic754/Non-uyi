@@ -35,6 +35,13 @@ React запускается в API-режиме; деморежим можно 
 `product` преобразуется в `name` на границе React; неизвестный язык — в `unknown`.
 
 Подробности промпта и подключения: [FIRDAVS.md](FIRDAVS.md).
+
+Дополнения: пакет до 20 сообщений (одно сообщение на строку), повтор только
+неудачных сообщений, CSV-экспорт отфильтрованных заказов. Поиск, фильтры и
+мобильная вёрстка включены. Полная проверка задания описана в [CHECKS.md](CHECKS.md).
+Живой полный анализ: `npm run evaluate:analysis`; повтор только неудачных:
+`npm run evaluate:analysis -- --retry-failed`. Отчёт не содержит исходных
+сообщений, адресов и черновиков и исключён из Git.
 # Non Uyi operator assistant
 
 Small, privacy-conscious web app for reviewing bakery messages. It classifies Uzbek, Russian and mixed-language messages, extracts order details as validated JSON, and prepares a same-language reply draft for an operator to review. Complaints and spam are escalated without a reply.

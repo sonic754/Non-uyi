@@ -12,6 +12,15 @@ test('unidentifiable language permits a null draft instead of inventing a reply 
   assert.deepEqual(parseAnalysis(JSON.stringify(value)),value);
 });
 
+test('unconfirmed acceptance promises are replaced with owner-review drafts in the same language', () => {
+  for (const [language,reply] of [['uz','Buyurtmangiz qabul qilindi.'],['ru','Ваш заказ принят.'],['mixed','Buyurtmangiz tasdiqlandi. Ваш заказ подтверждён.']]) {
+    const value={category:'order',language,items:null,address:null,time:null,reply};
+    const result=parseAnalysis(JSON.stringify(value));
+    assert.doesNotMatch(result.reply,/buyurtmangiz (?:qabul qilindi|tasdiqlandi)|ваш заказ (?:принят|подтвержд)/iu);
+    assert.match(result.reply,language==='uz'?/egaga/:/владельцу/);
+  }
+});
+
 test('fenced JSON is parsed into exact order schema', () => {
   assert.deepEqual(parseAnalysis('```json\n{"category":"order","language":"uz","items":[{"product":"patir","quantity":5}],"address":null,"time":null,"reply":"So‘rovingizni egaga yetkazamiz."}\n```'), {
     category: 'order', language: 'uz', items: [{ product: 'patir', quantity: 5 }], address: null, time: null, reply: 'So‘rovingizni egaga yetkazamiz.'

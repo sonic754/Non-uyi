@@ -26,6 +26,9 @@ npm run build
 ## Hozirgi imkoniyatlar
 
 - Xabar yuborish, loading holati va takroriy parallel yuborishni bloklash.
+- Bir nechta xabar: har bir yangi qator alohida xabar, bir yuborishda 20 tagacha. Har biri 4000 belgigacha.
+- Paketda xato bo‘lsa qolgan xabarlar tahlil qilinadi, muvaffaqiyatli natijalar saqlanadi; faqat xato xabarlar qayta yuborish uchun qoladi.
+- Filtrlangan buyurtmalarni CSV sifatida yuklab olish, UTF-8 BOM va formula injection himoyasi bilan.
 - Kategoriya, til va matn/mahsulot/manzil bo‘yicha birgalikdagi filtrlar.
 - Barcha muvaffaqiyatli xabarlar uchun statistika; filtrlar statistikani o‘zgartirmaydi.
 - Filtrlangan buyurtmalar jadvali, natijalar va tavsiya etilgan javoblar.

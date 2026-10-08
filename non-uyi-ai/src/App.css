@@ -49,4 +49,9 @@ td { min-width: 125px; overflow-wrap: anywhere; }
 .error, .complaint-notice { color: #a12a32; }
 .error { border-radius: 8px; background: #fff0f0; padding: 12px; }
 footer { text-align: center; font-size: 12px; padding: 8px; }
+.batch-toggle { margin: 12px 0; }
+.batch-help { font-size: 13px; }
+.export-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin: 0 0 14px; font-size: 13px; }
+header, .form-footer, .result-meta { flex-wrap: wrap; }
+.panel, .filters > label { min-width: 0; }
 @media (max-width: 700px) { main { padding: 22px 14px; } .stats { grid-template-columns: repeat(2, 1fr); } .stat:first-child { grid-column: 1 / -1; } .filters { grid-template-columns: 1fr; } .panel { padding: 18px; } h1 { font-size: 30px; } .section-top { flex-wrap: wrap; } }
