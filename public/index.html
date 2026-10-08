@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="uz">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f5f0" />
+    <meta name="description" content="Non Uyi buyurtma xabarlarini ko‘rib chiqish paneli." />
+    <title>Non Uyi — Xabarlar</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <aside class="rail" aria-label="Asosiy menyu">
+      <a class="brand-mark" href="#home" aria-label="Non Uyi bosh sahifa">N<span>.</span></a>
+      <nav>
+        <a class="rail-link active" href="#messages" aria-label="Xabarlar" title="Xabarlar">▤</a>
+        <a class="rail-link" href="#reports" aria-label="Hisobotlar" title="Hisobotlar">◷</a>
+        <a class="rail-link" href="#settings" aria-label="Sozlamalar" title="Sozlamalar">⚙</a>
+      </nav>
+      <div class="rail-bottom"><span class="avatar">NU</span></div>
+    </aside>
+
+    <main class="shell" id="home">
+      <header class="topbar">
+        <div class="brand-lockup"><span class="brand-word">non uyi</span><span class="brand-sub">operator paneli</span></div>
+        <div class="topbar-right"><span class="live-dot"></span><span>AI yordamchi faol</span><button class="icon-button" id="language-button" aria-label="Tilni almashtirish">UZ <span>⌄</span></button></div>
+      </header>
+
+      <section class="page-heading" id="messages">
+        <div><p class="eyebrow">ISH STOLI <span>/</span> XABARLAR</p><h1>Assalomu alaykum, operator</h1><p class="muted">Bugungi mijoz xabarlarini tartiblang va javoblarni ko‘rib chiqing.</p></div>
+        <div class="date-chip"><span>●</span><span id="today-label">Bugun</span></div>
+      </section>
+
+      <section class="stats-grid" aria-label="Bugungi ko‘rsatkichlar">
+        <article class="stat-card"><div class="stat-top"><span class="stat-label">Jami xabarlar</span><span class="stat-icon">↗</span></div><strong id="stat-total">0</strong><span class="stat-foot">Bugun qayta ishlangan</span></article>
+        <article class="stat-card"><div class="stat-top"><span class="stat-label">Buyurtmalar</span><span class="stat-icon icon-wheat">✳</span></div><strong id="stat-orders">0</strong><span class="stat-foot">Tuzilgan buyurtmalar</span></article>
+        <article class="stat-card"><div class="stat-top"><span class="stat-label">Savollar</span><span class="stat-icon icon-blue">?</span></div><strong id="stat-questions">0</strong><span class="stat-foot">Javob kutayotgan savollar</span></article>
+        <article class="stat-card alert-card"><div class="stat-top"><span class="stat-label">Operator ko‘rigi</span><span class="stat-icon icon-red">!</span></div><strong id="stat-review">0</strong><span class="stat-foot">Shikoyat va aniqlashtirishlar</span></article>
+      </section>
+
+      <section class="workspace-grid">
+        <div class="panel inbox-panel">
+          <div class="panel-heading"><div><div class="section-kicker"><span class="kicker-dot"></span> KIRUVCHI OQIM</div><h2>Xabarlar navbati</h2></div><button class="text-button" id="clear-button">Tozalash <span>↻</span></button></div>
+          <div class="toolbar"><label class="search-box"><span>⌕</span><input id="search-input" type="search" placeholder="Xabar yoki mijozni qidiring" /></label><label class="filter-wrap"><span class="sr-only">Tur bo‘yicha filtrlash</span><select id="filter-select"><option value="all">Barcha xabarlar</option><option value="order">Buyurtmalar</option><option value="question">Savollar</option><option value="complaint">Shikoyatlar</option><option value="spam">Spam</option></select></label></div>
+          <div class="message-list" id="message-list" aria-live="polite"><div class="empty-state"><span class="empty-icon">✉</span><strong>Hozircha xabar yo‘q</strong><span>Chapdagi oynaga xabar kiriting yoki namuna tanlang.</span></div></div>
+        </div>
+
+        <div class="panel review-panel">
+          <div class="panel-heading"><div><div class="section-kicker"><span class="kicker-dot"></span> TEZKOR TAHLIL</div><h2>Yangi xabar</h2></div><span class="secure-badge">● Himoyalangan</span></div>
+          <form id="analyze-form">
+            <label for="message-input" class="field-label">Mijoz xabari <span>UZ / RU / aralash</span></label>
+            <textarea id="message-input" maxlength="4000" placeholder="Masalan: Assalomu alaykum, ertaga 2 ta patir kerak edi…" required></textarea>
+            <div class="input-meta"><span>Shaxsiy ma’lumotni kiritmang</span><span id="char-count">0 / 4000</span></div>
+            <div class="sample-row"><span>Namuna:</span><button type="button" class="sample-chip" data-sample="order">Buyurtma</button><button type="button" class="sample-chip" data-sample="question">Savol</button><button type="button" class="sample-chip" data-sample="complaint">Shikoyat</button></div>
+            <button class="primary-button" type="submit" id="analyze-button"><span>✦</span> Xabarni tahlil qilish <span class="button-arrow">→</span></button>
+          </form>
+          <div class="result-card" id="result-card" hidden>
+            <div class="result-top"><div><span class="result-caption">TAHLIL NATIJASI</span><h3 id="result-title">Xabar tahlil qilindi</h3></div><span id="result-badge" class="category-badge">—</span></div>
+            <div class="result-details" id="result-details"></div>
+            <div class="reply-block" id="reply-block"><div class="reply-heading"><span>JAVOB LOYIHASI</span><button type="button" id="copy-button" class="copy-button">Nusxalash</button></div><p id="reply-text"></p></div>
+            <div class="manual-alert" id="manual-alert" hidden><span>!</span><div><strong>Operator ko‘rigi kerak</strong><p>Shikoyat yoki spam aniqlangani uchun avtomatik javob berilmadi.</p></div></div>
+          </div>
+          <div class="error-card" id="error-card" role="alert" hidden></div>
+        </div>
+      </section>
+      <footer><span>© Non Uyi</span><span>AI natijalari yuborilishidan oldin operator tomonidan tekshiriladi.</span><span class="footer-status"><i></i> Tizim ishlayapti</span></footer>
+    </main>
+  </body>
+</html>
