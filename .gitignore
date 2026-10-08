@@ -4,3 +4,6 @@
 evaluation-results.json
 node_modules/
 dist/
+data/
+*.log
+hermes-usage.json

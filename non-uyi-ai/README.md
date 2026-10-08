@@ -13,6 +13,10 @@ npm install
 npm run dev
 ```
 
+Ikkinchi terminalda loyiha ildizidan `npm start` ishga tushiring.
+Server kalitni lokal `.env` orqali oladi. Vite `/api` so‘rovlarini
+`http://127.0.0.1:3000` serveriga uzatadi. Asosiy sahifa API rejimida ochiladi.
+
 ```sh
 npm test
 npm run test:logic
@@ -26,7 +30,7 @@ npm run build
 - Barcha muvaffaqiyatli xabarlar uchun statistika; filtrlar statistikani o‘zgartirmaydi.
 - Filtrlangan buyurtmalar jadvali, natijalar va tavsiya etilgan javoblar.
 - Shikoyatlar qizil rangda, avtomatik javobsiz. Hech qanday javob mijozga yuborilmaydi.
-- API ruxsati, limit, server, tarmoq, JSON formati va 30 soniyalik timeout xatolari.
+- API ruxsati, limit, server, tarmoq va JSON formati xatolari. Serverda 45 soniya, UI da 60 soniya kutish chegarasi.
 - Xatoda yozilgan matn va oldingi natijalar saqlanadi; qayta urinish mumkin.
 - Bekor qilingan eski so‘rov natijasi tarixga qo‘shilmaydi.
 - Tarix faqat xotirada: sahifa yangilansa, tozalanadi.
@@ -41,23 +45,23 @@ Demo rejimida ro‘yxatdagi 20 xabar uchun oldindan yozilgan javoblar ishlatilad
 Bu AI klassifikatsiyasi emas. Boshqa matn demo rejimida tushunarli xato beradi.
 Demo belgisi har bir natijada saqlanadi, API natijalari bilan adashmaydi.
 
-Haqiqiy API uchun `src/services/analyzeMessage.js` ichidagi funksiyani almashtiring:
+Haqiqiy API `src/services/analyzeMessage.js` orqali serverga ulangan:
 
 ```js
 export default async function analyzeMessage(message, { signal } = {}) {
-  // Sardorning Gemini chaqiruvi + Firdavs prompti + Behruz parseri.
-  // signal ni fetch/SDK ga uzating; tayyor obyektni return qiling.
+  // POST /api/analyze, signal fetch ga uzatiladi.
+  // Serverning product maydoni React uchun name ga aylantiriladi.
 }
 ```
 
-`App` ushbu funksiyani allaqachon import qiladi. Kod ulangach, interfeysda
-**Demo rejimi** belgisini o‘chiring. Hozir API rejimi "hali ulanmagan" xatosini
-ko‘rsatadi; demo javobiga yashirincha o‘tmaydi. Test yoki boshqa integratsiya uchun
+`App` ushbu funksiyani import qiladi. Asosiy sahifa API rejimida boshlanadi.
+**Demo rejimi** belgisini yoqsangiz, namunaviy javoblar ishlaydi.
+API xatosida demo javobiga yashirincha o‘tilmaydi. Test yoki boshqa integratsiya uchun
 `<App analyzeMessage={yourService} initialDemoMode={false} />` ishlaydi.
 
 ## Taklif etilgan yagona JSON shartnomasi
 
-Bu formatni jamoa bilan kelishish kerak. Boshqa format tanlansa, adapterda moslang.
+Server Behruzning olti maydonli JSON formatini tekshiradi; adapter uni quyidagi React formatiga moslaydi.
 Funksiya JSON matni emas, quyidagi JavaScript obyektini qaytarsin:
 
 ```json
@@ -100,9 +104,8 @@ unmount, bo‘sh xabar, null maydonlar va noto‘g‘ri JSON tuzilishini tekshir
 `npm run test:logic` yordamchi jarayon ochmasdan 20 namuna, filtrlar, statistika,
 xato formatlari va timeoutni tekshiradi. Bu React integratsiya testlarini almashtirmaydi.
 
-**Gemini bilan jonli sinov o‘tkazilmagan**: API kodi va kalit mavjud emas.
-20 namuna bo‘yicha haqiqiy model aniqligini tekshirish Sardorning xizmati
-ulangandan keyin alohida bajariladi.
+API serveri Gemini orqali to‘liq tahlilni qaytaradi. Bu yerda 20 namunaga
+asoslangan UI testlari model aniqligi bo‘yicha yashirin test hisoblanmaydi.
 
 Texnik ma’lumotlar: [React useState](https://react.dev/reference/react/useState),
 [Vite](https://vite.dev/guide/), [Vitest](https://vitest.dev/guide/).

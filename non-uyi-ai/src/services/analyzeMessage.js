@@ -1,7 +1,18 @@
-// Integration point for Sardor + Firdavs + Behruz.
-// Replace this body with the Gemini call and parser; see README.md for the contract.
-export default async function analyzeMessage(_message, _options = {}) {
-  throw Object.assign(new Error('Gemini API hali ulanmagan. Demo rejimidan foydalaning.'), {
-    code: 'NOT_CONFIGURED',
+import { normalizeResult } from '../logic/messages.js';
+
+export default async function analyzeMessage(message, { signal } = {}) {
+  const response = await fetch('/api/analyze', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message }), signal,
   });
+  if (!response.ok) throw Object.assign(new Error('Analysis API failed'), { status: response.status });
+  try {
+    const { result } = await response.json();
+    return normalizeResult({
+      ...result, language: result.language ?? 'unknown',
+      items: result.items === null ? null : result.items.map(({ product, quantity }) => ({ name: product, quantity })),
+    });
+  } catch {
+    throw Object.assign(new Error('Invalid analysis response'), { code: 'INVALID_RESPONSE' });
+  }
 }

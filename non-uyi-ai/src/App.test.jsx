@@ -132,11 +132,16 @@ it('uses a labelled demo fixture without calling the API', async () => {
   expect(service).not.toHaveBeenCalled();
 });
 
-it('reports that the real API adapter is not connected', async () => {
+it('reports a server error from the connected API adapter', async () => {
   const user = userEvent.setup();
-  render(<App initialDemoMode={false} />);
-  await submit(user, 'Salom');
-  expect(await screen.findByRole('alert')).toHaveTextContent('Gemini API hali ulanmagan');
+  const fetchMock = vi.fn().mockResolvedValue({ ok: false, status: 503 });
+  vi.stubGlobal('fetch', fetchMock);
+  try {
+    render(<App initialDemoMode={false} />);
+    await submit(user, 'Salom');
+    expect(await screen.findByRole('alert')).toHaveTextContent('vaqtincha');
+    expect(fetchMock).toHaveBeenCalledWith('/api/analyze', expect.objectContaining({ method: 'POST', body: JSON.stringify({ message: 'Salom' }) }));
+  } finally { vi.unstubAllGlobals(); }
 });
 
 it('times out, permits retry and ignores a late response from the old request', async () => {

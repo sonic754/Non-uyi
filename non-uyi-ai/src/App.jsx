@@ -7,7 +7,7 @@ import { analyzeDemoMessage, trainingMessages } from './data/trainingMessages.js
 import { categories, languages, filterMessages, getStats, getErrorMessage, MAX_MESSAGE_LENGTH, requestAnalysis } from './logic/messages.js';
 import './App.css';
 
-export default function App({ analyzeMessage = analyzeMessageService, initialDemoMode = true, timeoutMs = 30000 }) {
+export default function App({ analyzeMessage = analyzeMessageService, initialDemoMode = true, timeoutMs = 60000 }) {
   const [text, setText] = useState('');
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +24,7 @@ export default function App({ analyzeMessage = analyzeMessageService, initialDem
     if (activeRequest.current) return;
     const messageText = text.trim();
     if (!messageText) { setError('Xabar matnini kiriting.'); return; }
-    if (messageText.length > MAX_MESSAGE_LENGTH) { setError('Xabar 5000 belgidan oshmasligi kerak.'); return; }
+    if (messageText.length > MAX_MESSAGE_LENGTH) { setError(`Xabar ${MAX_MESSAGE_LENGTH} belgidan oshmasligi kerak.`); return; }
     const controller = new AbortController();
     activeRequest.current = controller;
     setIsLoading(true);

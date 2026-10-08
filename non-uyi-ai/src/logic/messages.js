@@ -2,7 +2,7 @@ export const categories = {
   order: 'Buyurtma', question: 'Savol', complaint: 'Shikoyat', spam: 'Spam',
 };
 export const languages = { uz: 'O‘zbekcha', ru: 'Ruscha', mixed: 'Aralash', unknown: 'Aniqlanmagan' };
-export const MAX_MESSAGE_LENGTH = 5000;
+export const MAX_MESSAGE_LENGTH = 4000;
 
 const invalidResult = () => Object.assign(new Error('API javobi kutilgan formatda emas.'), { code: 'INVALID_RESPONSE' });
 const optionalText = (value) => {

@@ -1,10 +1,13 @@
 {
-  "name": "non-uyi-ai-prompt",
+  "name": "non-uyi-ai",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test ai-prompt.test.js gemini-client.test.js",
+    "start": "node --env-file-if-exists=.env server.js",
+    "test": "node --test ai-prompt.test.js gemini-client.test.js tests/*.test.js",
+    "check": "node --check server.js && node --check public/core.js && node --check public/app.js",
     "evaluate": "node --env-file=.env evaluate-prompt.js",
     "evaluate:smoke": "node --env-file=.env evaluate-prompt.js --smoke"
-  }
+  },
+  "engines": { "node": ">=22" }
 }
